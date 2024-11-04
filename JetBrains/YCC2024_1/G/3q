@@ -1,0 +1,33 @@
+/**
+ *    author:  feev1x
+ *    created: 30.10.2024 10:11:40
+**/
+#include "bits/stdc++.h"
+using namespace std;
+
+#ifndef ONLINE_JUDGE
+#include "/debug.h"
+#else
+#define debug(...)
+#define debugArr(...)
+#endif
+
+using ll = long long;
+
+signed main() {
+  int n, x, y, c; scanf("%d%d%d%d", &n, &x, &y, &c);
+  int l = 0, r = n, ans = 0;
+  while (l <= r) {
+    int m = l + r >> 1;
+    int on = (2 * min({m, x - 1, n - x, y - 1, n - y, (n - 1) / 2}) + 1);
+    on *= on;
+    if (on >= c) {
+      ans = m;
+      r = m - 1;
+    } else {
+      l = m + 1;
+    }
+  }
+  printf("%d\n", ans);
+  return 0;
+}

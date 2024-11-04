@@ -1,0 +1,80 @@
+/**
+ *    author:  feev1x
+ *    created: 15.10.2024 11:21:49
+**/
+#include "bits/stdc++.h"
+using namespace std;
+
+#ifndef ONLINE_JUDGE
+#include "/debug.h"
+#else
+#define debug(...)
+#define debugArr(...)
+#endif
+
+signed main() {
+//  freopen("birthday.in", "r", stdin);
+//  freopen("birthday.out", "w", stdout);
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  int n; cin >> n;
+  vector<int> a(n), b(n);
+  map<int, int> cnt, cnt1;
+  set<pair<int, int>> st;
+  for (int i = 0; i < n; ++i) {
+    cin >> a[i] >> b[i];
+    st.emplace(a[i], b[i]);
+    cnt[a[i]]++;
+    cnt1[b[i]]++;
+  }
+  vector<pair<int, int>> del;
+  auto clear = [&]() {
+    for (auto [u, v]: del) {
+      st.erase({u, v});
+    }
+    del.clear();
+  };
+  for (auto [u, v]: st) {
+    if (cnt[u] == 1) {
+      del.emplace_back(u, v);
+      cnt[u] = 0;
+    } else if (cnt1[v] <= 1) {
+      del.emplace_back(u, v);
+      cnt[u] = -1;
+      cnt1[v] = 0;
+    }
+  }
+  for (auto [u, v]: st) {
+    if (cnt[u] == 1) {
+      cnt1[v]--;
+    }
+  }
+  debug(del);
+  clear();
+  for (auto [u, v]: st) {
+    if (cnt[u] == -1) {
+      del.emplace_back(u, v);
+    }
+  }
+  debug(del);
+  clear();
+  for (auto [u, v]: st) {
+    if (cnt1[v] != 1) {
+      del.emplace_back(u, v);
+      cnt1[v] = 0;
+      cnt[u]--;
+    }
+  }
+  debug(del);
+  clear();
+  for (auto [u, v]: st) {
+    if (cnt[u] != 1) {
+      del.emplace_back(u, v);
+      cnt[u] = 0;
+      cnt1[v]--;
+    }
+  }
+  debug(del);
+  clear();
+  cout << st.begin()->first << ' ' << st.begin()->second << '\n';
+}
