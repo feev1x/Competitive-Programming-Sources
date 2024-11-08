@@ -1,0 +1,128 @@
+/**
+ *    author:  feev1x
+ *    created: 07.11.2024 20:46:24
+**/
+#include "bits/stdc++.h"
+using namespace std;
+
+#ifndef ONLINE_JUDGE
+#include "/debug.h"
+#else
+#define debug(...)
+#endif
+
+using ll = long long;
+using ld = long double;
+
+const ll inf = numeric_limits<ll>::max();
+
+struct Point {
+  int x, y, i;
+  ll dis(Point sm) {
+    ll dlx = x - sm.x;
+    ll dly = y - sm.y;
+    return dlx * dlx + dly * dly;
+  }
+};
+
+struct Dsu {
+  vector<int> p, sz;
+  int n;
+  Dsu(int _n) : n(_n) {
+    sz.assign(n + 1, 1);
+    p.resize(n + 1);
+    iota(p.begin(), p.end(), 0);
+  }
+  inline int get(int v) {
+    return v == p[v] ? v : p[v] = get(p[v]);
+  }
+  inline bool unite(int u, int v) {
+    u = get(u);
+    v = get(v);
+    if (u != v) {
+      if (sz[u] > sz[v]) {
+        swap(u, v);
+      }
+      p[u] = v;
+      sz[v] += sz[u];
+      return true;
+    }
+    return false;
+  }
+};
+
+signed main() {
+  int n, m; scanf("%d%d", &n, &m);
+  vector<Point> org(n);
+  for (auto &[x, y, i]: org) {
+    scanf("%d%d", &x, &y);
+  }
+  vector<Point> sim(m);
+  for (auto &[x, y, i]: sim) {
+    scanf("%d%d", &x, &y);
+  }
+  for (int i = 0; i < n; ++i) {
+    org[i].i = i + 1;
+  }
+  for (int i = 0; i < m; ++i) {
+    sim[i].i = i + 1;
+  }
+  auto Organs = [&](int v) {
+    ll res = 0;
+    for (auto u: org) {
+      res += org[v].dis(u);
+    }
+    return res;
+  };
+  auto Solve = [&](int v) {
+    ll res = Organs(v);
+    vector<tuple<ll, int, int>> e;
+    for (int i = 0; i < m - 1; ++i) {
+      for (int j = i + 1; j < m; ++j) {
+        e.emplace_back(sim[i].dis(sim[j]), i, j);
+      }
+    }
+    Dsu d(m);
+    vector<pair<int, int>> eg;
+    sort(e.begin(), e.end());
+    for (auto [dis, i, j]: e) {
+      if (d.unite(i, j)) {
+        res += dis;
+        eg.emplace_back(i, j);
+      }
+    }
+    return pair{res, eg};
+  };
+  ll len = inf;
+  int opt = -1;
+  for (int i = 0; i < m; ++i) {
+    ll _len = Organs(i);
+    if (_len < len) {
+      opt = i;
+      len = _len;
+    }
+  }
+  auto [res, eg] = Solve(opt);
+  printf("%lld\n%d\n", res, n + int(eg.size()));
+  for (auto u: org) {
+    printf("s %d -> %d\n", u.i, opt + 1);
+  }
+  vector<vector<int>> g(m);
+  vector<pair<int, int>> e;
+  for (auto [u, v]: eg) {
+    g[u].emplace_back(v);
+    g[v].emplace_back(u);
+  }
+  function<void(int, int)> Dfs = [&](int v, int p) {
+    for (auto to: g[v]) {
+      if (to == p) continue;
+      e.emplace_back(v + 1, to + 1);
+      Dfs(to, v);
+    }
+  };
+  Dfs(opt, -1);
+  for (auto [u, v]: e) {
+    printf("u %d -> %d\n", u, v);
+  }
+  return 0;
+}
