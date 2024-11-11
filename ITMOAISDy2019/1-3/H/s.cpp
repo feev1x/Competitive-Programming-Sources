@@ -1,6 +1,6 @@
 /**
  *    author:  feev1x
- *    created: 11.11.2024 17:58:16
+ *    created: 10.11.2024 20:23:19
 **/
 #include "bits/stdc++.h"
 
@@ -11,7 +11,8 @@
 #define debugArr(...)
 #endif
 
-using i64 = long long;
+using ll = long long;
+using ld = long double;
 
 int main() {
   

@@ -1,6 +1,6 @@
-/**
+/*￼*
  *    author:  feev1x
- *    created: 11.11.2024 17:58:16
+ *    created: 11.11.2024 09:46:05
 **/
 #include "bits/stdc++.h"
 
@@ -11,9 +11,13 @@
 #define debugArr(...)
 #endif
 
-using i64 = long long;
+using ll = long long;
+using ld = long double;
 
 int main() {
-  
+  ld a, p; scanf("%Lf%Lf", &a, &p);
+  ld ol = (a + 100) / 2;
+  ld ar = 100 - ol;
+
   return 0;
 }
