@@ -1,0 +1,66 @@
+/**
+ *    author:  feev1x
+ *    created: 15.11.2024 10:12:55
+**/
+#include <bits/stdc++.h>
+
+using i64 = long long;
+
+std::string Solve(int fr, int sc, std::vector<int> c) {
+  c[fr]--, c[sc]--;
+  std::string ans;
+  ans += char(fr + '0');
+  ans += char(sc + '0');
+  fr %= 3;
+  sc %= 3;
+  while (true) {
+    bool flag = false;
+    for (int i = 9; i >= 0; --i) {
+      if (i % 3 != fr && i % 3 != sc && c[i]) {
+        ans += char(i + '0');
+        c[i]--;
+        fr = sc;
+        sc = i % 3;
+        flag = true;
+        break;
+      }
+    }
+    if (!flag) {
+      break;
+    }
+  }
+  return ans;
+}
+
+int main() {
+  std::vector<int> c(10);
+  for (int i = 0; i <= 9; ++i) {
+    scanf("%d", &c[i]);
+  }
+  std::string res;
+  for (int i = 1; i < 10; ++i) {
+    for (int j = 0; j < 10; ++j) {
+      if (i % 3 == j % 3 || !c[i] || !c[j]) continue;
+      std::string mb = Solve(i, j, c);
+      if (res.empty() || mb > res) {
+        res = mb;
+      }
+    }
+  }
+  std::vector<std::string> mp(3);
+  for (int i = 9; i >= 0; --i) {
+    for (int j = 0; j < c[i]; ++j) {
+      mp[i % 3] += char(i + '0');
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    if (mp[i].size() < res.size() || mp[i].front() == '0') {
+      continue;
+    }
+    if (mp[i].size() > res.size() || mp[i] > res) {
+      res = mp[i];
+    }
+  }
+  printf("%s", res.c_str());
+  return 0;
+}
