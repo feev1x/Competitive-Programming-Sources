@@ -22,10 +22,10 @@ int main() {
   }
   long double mx = 0;
   for (int i = 2; i < n; ++i) {
-    mx = std::max(mx, (suf_sum[i] - suf_mn[i]) * (long double)(n - i));
+    mx = std::max(mx, (suf_sum[i] - suf_mn[i]) / (long double)(n - i));
   }
   for (int k = 1; k <= n - 2; ++k) {
-    if ((suf_sum[k + 1] - suf_mn[k + 1]) / (long double)(n - k - 1) - mx <= EPS) {
+    if (mx - (suf_sum[k + 1] - suf_mn[k + 1]) / (long double)(n - k - 1) <= EPS) {
       printf("%d\n", k);
     }
   }
