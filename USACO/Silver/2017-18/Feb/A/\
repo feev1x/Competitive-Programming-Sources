@@ -1,0 +1,31 @@
+/**
+ *    author:  feev1x
+ *    created: 19.12.2024 11:37:15
+**/
+#include <bits/stdc++.h>
+
+using i64 = long long;
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr);
+  int l, n, rf, rb; std::cin >> l >> n >> rf >> rb;
+  std::vector<int> x(n), c(n);
+  std::set<std::pair<int, int>> st;
+  for (int i = 0; i < n; ++i) {
+    std::cin >> x[i] >> c[i];
+    st.emplace(c[i], x[i]);
+  }
+  i64 res = 0;
+  int start = 0;
+  for (auto [cost, pos]: st) {
+    if (pos <= start) {
+      continue;
+    }
+    int df = pos - start;
+    res += cost * (df * rb - df * rf);
+    start = pos;
+  }
+  std::cout << res << '\n';
+  return 0;
+}
