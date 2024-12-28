@@ -56,53 +56,44 @@ int main() {
       cnt2++;
     }
   }
-  if (max > 2 && (n & 1 || cnt2 != n / 2)) {
+  if (n <= 5000) {
     i64 res = 0;
-    for (int i = 0; i + 1 < n; ++i) {
-      std::set<int> out;
-      std::set<std::pair<int, int>> in, mx;
-      std::vector<std::set<int>> st(n + 1);
-      std::vector<bool> mp(n + 1);
-      for (int j = 1; j <= n; ++j) {
-        for (auto u: ap[j]) {
-          if (u >= i) {
-            out.emplace(u);
-          }
+    std::vector<std::vector<int>> nums(n + 1);
+    std::vector<bool> used(n + 1);
+    for (int l = 0; l < n - 1; ++l) {
+      std::vector<int> left(n - l - 1);
+      int mx_l = -1, mn_r = n + 5;
+      auto Add = [&](int i) {
+        int x = a[i];
+        if (!used[x]) {
+          mx_l = i;
         }
+        used[x] = true;
+      };
+      Add(l);
+      nums[a[l]].emplace_back(l);
+      for (int r = l + 1; r < n; ++r) {
+        Add(r);
+        left[r - l - 1] = mx_l;
+        nums[a[r]].emplace_back(r);
       }
-      for (int j = i; j + 1 < n; ++j) {
-        while (in.size() && in.begin()->first <= j) {
-          mx.erase({*st[in.begin()->second].begin(), in.begin()->second});
-          st[in.begin()->second].erase(st[in.begin()->second].begin());
-          if (st[in.begin()->second].empty()) {
-            goto end;
-          }
-          if (*st[in.begin()->second].begin() > j) {
-            mx.emplace(*st[in.begin()->second].begin(), in.begin()->second);
-          }
-          in.erase(in.begin());
-        }
-        while (out.size() && *out.begin() <= j) {
-          out.erase(out.begin());
-        }
-        if (!mp[a[j]]) {
-          mp[a[j]] = true;
-          for (auto u: ap[a[j]]) {
-            if (u > j) {
-              out.erase(u);
-              st[a[j]].emplace(u);
-              in.emplace(u, a[j]);
-            }
-          }
-          if (st[a[j]].empty()) {
-            goto end;
-          }
-          mx.emplace(*st[a[j]].begin(), a[j]);
-        }
-        int l = (--mx.end())->first, r = (out.empty() ? n : *out.begin());
-        res += (r >= l ? r - l : 0);
+      for (int i = l; i < n; ++i) {
+        used[a[i]] = false;
+        mn_r = std::min(mn_r, nums[a[i]].back());
       }
-  end: continue;
+      auto Remove = [&](int x) {
+        nums[x].pop_back();
+        if (nums[x].size()) {
+          mn_r = std::min(mn_r, nums[x].back());
+        }
+      };
+      for (int r = n - 1; r > l; --r) {
+        if (mn_r >= left[r - l - 1]) {
+          res += mn_r - left[r - l - 1];
+        }
+        Remove(a[r]);
+      }
+      Remove(a[l]);
     }
     std::cout << res << '\n';
   } else if (max <= 2) {
