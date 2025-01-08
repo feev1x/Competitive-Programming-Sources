@@ -1,0 +1,238 @@
+/**
+ *    author:  feev1x
+ *    created: 29.12.2024 10:27:47
+**/
+#include <bits/stdc++.h>
+
+using i64 = long long;
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr);
+  int tt; std::cin >> tt;
+  while (tt--) {
+    int n, q; std::cin >> n >> q;
+    std::string s; std::cin >> s;
+    std::vector<bool> a(n + 1), b(n + 1);
+    std::array<std::set<int>, 2> sa, sb;
+    for (int i = 1; i <= n; ++i) {
+      a[i] = s[i - 1] == 'R';
+      sa[a[i]].emplace(i);
+    }
+    std::cin >> s;
+    for (int i = 1; i <= n; ++i) {
+      b[i] = s[i - 1] == 'U';
+      sb[b[i]].emplace(i);
+    }
+    int r1, c1;
+    auto FindR = [&](int l, int r, int x) {
+      auto it = sa[x].lower_bound(l);
+      if (sa[x].empty() || it == sa[x].end() || *it > r) {
+        return -1;
+      }
+      return *it;
+    };
+    auto FindC = [&](int l, int r, int x) {
+      auto it = sb[x].lower_bound(l);
+      if (sb[x].empty() || it == sb[x].end() || *it > r) {
+        return -1;
+      }
+      return *it;
+    };
+    std::array<std::array<std::array<bool, 2>, 2>, 4> used{};
+    auto Dfs = [&](auto &&self, int r, int c) {
+      if (r == r1 && c == c1) {
+        return true;
+      }
+      if (r == r1 && c < c1 == a[r]) {
+        return true;
+      }
+      if (c == c1 && r > r1 == b[c]) {
+        return true;
+      }
+      if (r >= r1 && c > c1) {
+        if (used[2][a[r]][b[c]]) {
+          return false;
+        }
+        used[2][a[r]][b[c]] = true;
+        if (a[r]) {
+          int found = FindC(c, n, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+        } else {
+          int found = FindC(c1 + 1, c, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindC(1, c1, k);
+            if (found != -1 && self(self, r, found)) {
+              return true;
+            }
+          }
+        }
+        if (b[c]) {
+          int found = FindR(r1, r, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindR(1, r1 - 1, k);
+            if (found != -1 && self(self, found, c)) {
+              return true;
+            }
+          }
+        } else {
+          int found = FindR(r, n, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+        }
+      } else if (r > r1 && c >= c1) {
+        if (used[3][a[r]][b[c]]) {
+          return false;
+        }
+        used[3][a[r]][b[c]] = true;
+        if (a[r]) {
+          int found = FindC(c, c1, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindC(c1 + 1, n, k);
+            if (found != -1 && self(self, r, found)) {
+              return true;
+            }
+          }
+        } else {
+          int found = FindC(1, c, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+        }
+        if (b[c]) {
+          int found = FindR(r1 + 1, r, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindR(1, r1, k);
+            if (found != -1 && self(self, found, c)) {
+              return true;
+            }
+          }
+        } else {
+          int found = FindR(r, n, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+        }
+      } else if (r < r1 && c >= c1) {
+        if (used[1][a[r]][b[c]]) {
+          return false;
+        }
+        used[1][a[r]][b[c]] = true;
+        if (a[r]) {
+          int found = FindC(c, n, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+        } else {
+          int found = FindC(c1, c, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindC(1, c1 - 1, k);
+            if (found != -1 && self(self, r, found)) {
+              return true;
+            }
+          }
+        }
+        if (b[c]) {
+          int found = FindR(1, r, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+        } else {
+          int found = FindR(r, r1 - 1, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindR(r1, n, k);
+            if (found != -1 && self(self, found, c)) {
+              return true;
+            }
+          }
+        }
+      } else {
+        if (used[0][a[r]][b[c]]) {
+          return false;
+        }
+        used[0][a[r]][b[c]] = true;
+        if (a[r]) {
+          int found = FindC(c, c1 - 1, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            found = FindC(c1, n, k);
+            if (found != -1 && self(self, r, found)) {
+              return true;
+            }
+          }
+        } else {
+          int found = FindC(1, c, !b[c]);
+          if (found != -1 && self(self, r, found)) {
+            return true;
+          }
+        }
+        if (b[c]) {
+          int found = FindR(1, r, !a[r]);
+          if (found != -1 && self(self, found, c)) {
+            return true;
+          }
+        } else {
+          int found = FindR(r, r1, !a[r]);
+          if (found != -1 && self(self, found, r)) {
+            return true;
+          }
+          for (int k = 0; k < 2; ++k) {
+            int found = FindR(r1 + 1, n, k);
+            if (found != -1 && self(self, found, c)) {
+              return true;
+            }
+          }
+        }
+      }
+      return false;
+    };
+    while (q--) {
+      int type; std::cin >> type;
+      if (type == 1) {
+        int r, c; std::cin >> r >> c >> r1 >> c1;
+        for (int i = 0; i < 4; ++i) {
+          for (int j = 0; j < 2; ++j) {
+            for (int k = 0; k < 2; ++k) {
+              used[i][j][k] = false;
+            }
+          }
+        }
+        std::cout << (Dfs(Dfs, r, c) ? "YES\n" : "NO\n");
+      } else if (type == 2) {
+        int i; std::cin >> i;
+        sa[a[i]].erase(i);
+        a[i] = a[i] == 1 ? 0 : 1;
+        sa[a[i]].emplace(i);
+      } else {
+        int i; std::cin >> i;
+        sb[b[i]].erase(i);
+        b[i] = b[i] == 1 ? 0 : 1;
+        sb[b[i]].emplace(i);
+      }
+    }
+  }
+  return 0;
+}
