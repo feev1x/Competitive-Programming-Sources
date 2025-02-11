@@ -31,8 +31,8 @@ int main() {
         
         int cnt = std::upper_bound(x.begin(), x.end(), x[i] + n - 1) - std::lower_bound(x.begin(), x.end(), x[i]);
 
-        if (cnt == n - 1 && x[n - 2] == x[i] + n - 2 && i == 0) {
-            cnt = n - 2;
+        if (cnt == n - 1 && x[n - 2] == x[i] + n - 2 && i == 0 || x[i] + n - 1 > x[n - 1]) {
+            continue;
         }
 
         mn = std::min(mn, n - cnt);
