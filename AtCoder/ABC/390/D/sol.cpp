@@ -3,6 +3,8 @@
  *    created: 29.01.2025 20:54:55
 **/
 #include <bits/stdc++.h>
+#pragma GCC optimize("O3,unroll-loops")
+#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
 
 int main() {
     std::ios_base::sync_with_stdio(false);
@@ -15,44 +17,48 @@ int main() {
         std::cin >> u;
     }
     
-    std::map<std::vector<int64_t>, bool> used;
-
     std::set<int64_t> res;
 
-    auto b = a;
+    auto Dfs = [&](auto &&self, std::map<int64_t, int> st, int i) {
+        if (i == n) {
+            int64_t xr = 0;
 
-    auto Dfs = [&](auto &&self) {
-        if (used[b]) {
+            for (auto [key, val]: st) {
+                xr ^= key * (val & 1);
+            }
+
+
+            res.emplace(xr);
+
             return;
         }
 
-        used[b] = true;
-        std::vector<int> pos;
-        int xr = 0;
-        for (int i = 0; i < n; ++i) {
-            xr ^= b[i];
+        auto s = st;
+        for (auto [key, val]: st) {
+            s[key]--;
 
-            if (b[i]) {
-                pos.emplace_back(i);
+            if (!s[key]) {
+                s.erase(key);
             }
+
+            s[key + a[i]]++;
+
+            self(self, s, i + 1);
+
+            s[key + a[i]]--;
+            if (!s[key + a[i]]) {
+                s.erase(key + a[i]);
+            }
+
+            s[key]++;
         }
 
-        res.emplace(xr);
+        s[a[i]]++;
 
-        for (int x = 0; x < pos.size(); ++x) {
-            for (int y = x + 1; y < pos.size(); ++y) {
-                int i = pos[x], j = pos[y];
-                int temp = b[i];
-                b[i] = 0;
-                b[j] += temp;
-                self(self);
-                b[i] = temp;
-                b[j] -= temp;
-            }
-        }
+        self(self, s, i + 1);
     };
 
-    Dfs(Dfs);
+    Dfs(Dfs, {}, 0);
 
     std::cout << res.size() << '\n';
     return 0;
