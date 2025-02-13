@@ -12,19 +12,19 @@ int main() {
     
     int n; std::cin >> n;
 
-    std::vector<int64_t> a(n);
+    std::vector<int64_t> a(n), gr(n + 1);
     for (auto &u: a) {
         std::cin >> u;
     }
     
-    std::set<int64_t> res;
+    std::unordered_set<int64_t> res;
 
-    auto Dfs = [&](auto &&self, std::map<int64_t, int> st, int i) {
+    auto Dfs = [&](auto &&self, int cnt, int i) {
         if (i == n) {
             int64_t xr = 0;
 
-            for (auto [key, val]: st) {
-                xr ^= key * (val & 1);
+            for (int i = 1; i <= cnt; ++i) {
+                xr ^= gr[i];
             }
 
 
@@ -33,32 +33,16 @@ int main() {
             return;
         }
 
-        auto s = st;
-        for (auto [key, val]: st) {
-            s[key]--;
+        for (int j = 1; j <= cnt + 1; ++j) {
+            gr[j] += a[i];
 
-            if (!s[key]) {
-                s.erase(key);
-            }
+            self(self, std::max(j, cnt), i + 1);
 
-            s[key + a[i]]++;
-
-            self(self, s, i + 1);
-
-            s[key + a[i]]--;
-            if (!s[key + a[i]]) {
-                s.erase(key + a[i]);
-            }
-
-            s[key]++;
+            gr[j] -= a[i];
         }
-
-        s[a[i]]++;
-
-        self(self, s, i + 1);
     };
 
-    Dfs(Dfs, {}, 0);
+    Dfs(Dfs, 0, 0);
 
     std::cout << res.size() << '\n';
     return 0;
