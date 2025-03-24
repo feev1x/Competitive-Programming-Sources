@@ -6,42 +6,11 @@
 
 constexpr int N = 1e6 + 5;
 
-std::map<int, int> pf[N];
-std::vector<int> mp[N];
-
-inline int binpow(int a, int n) {
-    int res = 1;
-
-    while (n) {
-        if (n & 1) {
-            res *= a;
-        }
-
-        a *= a;
-        n >>= 1;
-    }
-
-    return res;
-}
-
 int main() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    for (int i = 2; i < N; ++i) {
-        int val = i;
-
-        for (int j = 2; j * j <= i; ++j) {
-            if (i % j == 0) {
-                val = j;
-
-                break;
-            }
-        }
-
-        pf[i] = pf[i / val];
-        pf[i][val]++;
-    }
+    std::vector<int> cnt(N), ans(N, 1);
 
     int n, k; std::cin >> n >> k;
 
@@ -49,29 +18,36 @@ int main() {
     for (auto &u: a) {
         std::cin >> u;
 
-        for (auto [pr, cnt]: pf[u]) {
-            mp[pr].emplace_back(cnt);
-        }
+        cnt[u]++;
     }
 
-    for (int i = 0; i < N; ++i) {
-        if (mp[i].size() >= k) {
-            std::sort(mp[i].begin(), mp[i].end(), std::greater<>());
+    auto b = a;
+    
+    std::sort(b.begin(), b.end());
+    b.erase(unique(b.begin(), b.end()), b.end());
+
+    for (int i = 1; i < N; ++i) {
+        int cn = 0, mx = 0;;
+
+        for (int j = i; j < N; j += i) {
+            cn += cnt[j];
+
+            if (cn >= k) {
+                mx = j;
+
+                break;
+            }
+        }
+
+        if (mx) {
+            for (int j = i; j < N; j += i) {
+                ans[j] = std::max(ans[j], i);
+            }
         }
     }
 
     for (auto u: a) {
-        int res = 1;
-
-        for (auto [pr, cnt]: pf[u]) {
-            if (mp[pr].size() < k) {
-                continue;
-            }
-
-            res *= binpow(pr, std::min(mp[pr][k - 1], cnt));
-        }
-
-        std::cout << res << '\n';
+        std::cout << ans[u] << '\n';
     }
     return 0;
 }

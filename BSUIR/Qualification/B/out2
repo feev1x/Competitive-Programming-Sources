@@ -1,0 +1,8 @@
+{
+ let a = new();
+ {
+  let b = new();
+ }
+ let c = new();
+}
+let e = new();

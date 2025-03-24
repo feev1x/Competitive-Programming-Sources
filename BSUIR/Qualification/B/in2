@@ -1,0 +1,9 @@
+8
+let a = new();
+let b = new();
+drop(b);
+let c = new();
+drop(c);
+drop(a);
+let e = new();
+drop(e);

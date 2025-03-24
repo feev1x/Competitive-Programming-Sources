@@ -1,0 +1,7 @@
+6
+let aba = new();
+let caba = new();
+let daba = new();
+drop(aba);
+drop(daba);
+drop(caba);
