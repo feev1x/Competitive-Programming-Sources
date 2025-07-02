@@ -1,0 +1,115 @@
+#include "permgame.h"
+#include <bits/stdc++.h>
+
+int Alice(int m, int e, std::vector<int> u, std::vector<int> v, int n, std::vector<int> p) {
+    int cnt = 0;
+    
+    std::vector<int> pos(n), par(n, -1), nx(n, -1);
+    for (int i = 0; i < n; ++i) {
+        if (p[i] == i) {
+            cnt++;
+        }
+
+        pos[p[i]] = i;
+    }
+
+    std::vector<std::vector<int>> g(m);
+    for (int i = 0; i < e; ++i) {
+        g[u[i]].emplace_back(v[i]);
+        g[v[i]].emplace_back(u[i]);
+    }
+
+    int va = -1;
+    for (int i = 0; i < n; ++i) {
+        if (g[i].size() == 1) {
+            va = i;
+
+            break;
+        }
+    }
+
+    auto Dfs = [&](auto &&self, int v) -> void {
+        for (auto to: g[v]) {
+            if (par[v] == to) {
+                continue;
+            }
+
+            par[to] = v;
+            nx[v] = to;
+
+            self(self, to);
+        }
+    };
+
+    Dfs(Dfs, va);
+
+    for (int i = 0; i < m; ++i) {
+        if (g[i].size() > 2) {
+            return cnt;
+        }
+    }
+    
+    if (cnt > n - m) {
+        return cnt;
+    }
+
+    auto Swap = [&](int i, int j) {
+        std::swap(p[i], p[j]);
+        std::swap(pos[p[i]], pos[p[j]]);
+    };
+
+    if (m == 2) {
+        for (int i = 0; i < n; ++i) {
+            if (i != p[i]) {
+                Bob({i, pos[i]});
+                Swap(i, pos[i]);
+            }
+        }
+
+        return n;
+    }
+
+    if (cnt >= n - m + 1) {
+        return cnt;
+    }
+
+    if (e == m) {
+    } else {
+        // ans = n - m + 1
+        
+        while (true) {
+            int u = va;
+
+            std::vector<int> t(m);
+            std::vector<bool> used(n);
+            for (int i = 0; i < n && u != -1; ++i) {
+                if (used[i] || i == p[i]) {
+                    continue;
+                }
+
+                used[i] = true;
+                t[u] = i; 
+                int j = pos[i];
+
+                u = nx[u];
+                while (u != -1 && !used[j]) {
+                    t[u] = j;
+                    used[j] = true;
+                    j = pos[j];
+                    u = nx[u];
+                }
+            }
+
+
+            if (u != -1) {
+                break;
+            }
+
+            Bob(t);
+        }
+
+        return n - m + 1;
+    }
+
+    return n - m + 1;
+}

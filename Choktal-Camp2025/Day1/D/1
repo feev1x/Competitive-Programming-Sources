@@ -1,0 +1,41 @@
+/**
+ *    author:  feev1x
+ *    created: 01.07.2025 11:30:40
+**/
+#include <bits/stdc++.h>
+
+int main() {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    
+    int n; std::cin >> n;
+
+    int max = 0;
+    std::vector<std::vector<int>> a(n + 1);
+    for (int i = 1; i <= n; ++i) {
+        int k; std::cin >> k;
+
+        a[i].resize(k + 1);
+
+        for (int j = 1; j <= k; ++j) {
+            std::cin >> a[i][j];
+
+            a[i][0] = std::max(a[i][0], a[i][j]);
+        }
+    }
+
+    std::sort(a.begin() + 1, a.end());
+
+    int mx = 0, res = 0;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 1; j < a[i].size(); ++j) {
+            if (mx < a[i][j]) {
+                mx = a[i][j];
+                res++;
+            }
+        }
+    }
+
+    std::cout << res << '\n';
+    return 0;
+}

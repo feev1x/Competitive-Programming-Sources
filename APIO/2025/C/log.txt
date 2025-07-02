@@ -1,0 +1,18 @@
+Initial energy: 10000
+
+rotate([0], 5000)
+v <- [25000, 10000]
+New energy: 15000
+
+rotate([1], -10000)
+v <- [25000, 0]
+New energy: 25000
+
+rotate([1], 0)
+v <- [25000, 0]
+New energy: 25000
+
+rotate([0], 0)
+v <- [25000, 0]
+New energy: 25000
+

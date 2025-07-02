@@ -75,12 +75,12 @@ int main() {
 
             std::vector<int> path{1};
             while (v != n) {
-                while (adj[v].size() && !cap[adj[v].back()][v]) {
+                while (adj[v].size() && cap[v][adj[v].back()]) {
                     adj[v].pop_back();
                 }
 
                 if (adj[v].size()) {
-                    cap[adj[v].back()][v]--;
+                    cap[v][adj[v].back()]++;
 
                     v = adj[v].back();
 

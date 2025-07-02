@@ -1,6 +1,6 @@
 /**
  *    author:  feev1x
- *    created: 10.03.2025 13:34:32
+ *    created: 26.03.2025 15:49:57
 **/
 #include <bits/stdc++.h>
 
@@ -12,22 +12,28 @@ int main() {
     while (q--) {
         int n, k; std::cin >> n >> k;
 
-        int l = 0, r = n - 1, d = 1, nw = 1, cnt = 0;
-        while (cnt < k) {
-            if ((int64_t)d * 2 * (k - cnt) + nw < n) {
-                std::cout << d * 2 * (k - cnt) + nw + 1 << '\n';
-
-                exit(0);
+        auto Calc = [](auto &&self, int n, int k) {
+            if (n == 1) {
+                return k;
             }
 
-            int sz = (r - l + 1) / d;
+            if (k <= (n + 1) / 2) {
+                if (2 * k > n) {
+                    return (2 * k) % n;
+                }
 
-            nw = ((int64_t)d * 2 * (sz + 1) / 2 + nw) % r;
+                return 2 * k;
+            }
 
+            int temp = self(self, n / 2, k - (n + 1) / 2);
+            if (n & 1) {
+                return 2 * temp + 1;
+            }
 
-        }
+            return 2 * temp - 1;
+        };
 
-        std::cout << "-1\n";
+        std::cout << Calc(Calc, n, k) << '\n';
     }
     return 0;
 }
