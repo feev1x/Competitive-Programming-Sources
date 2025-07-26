@@ -1,0 +1,4 @@
+set -e
+
+g++ -Wall -Wshadow -o r sol.cpp grader.cpp
+./r

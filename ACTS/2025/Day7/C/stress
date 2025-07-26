@@ -1,0 +1,30 @@
+make gen
+make sol 
+make slow
+make check
+
+i=1
+while true; do
+  ./gen $i > input
+  ./sol < input > MyAns
+  ./slow < input > CorrectAns
+  if ! ./check; then
+    echo
+    echo "Test $i failed."
+    echo
+    echo "Input:"
+    cat input
+    echo
+    echo "Your output:"
+    cat MyAns
+    echo
+    echo "Answer:"
+    cat CorrectAns
+    echo
+    break
+  else
+    echo "Passed test case: $i"
+    echo
+  fi
+  i=$(expr $i + 1)
+done

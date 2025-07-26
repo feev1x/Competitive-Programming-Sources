@@ -1,0 +1,15 @@
+set -e
+
+g++ -Wall -Wshadow -o sol sol.cpp grader.cpp
+g++ -Wall -Wshadow -o slow slow.cpp grader.cpp
+make gen
+
+while true; do
+    ./gen > input
+    ./sol < input > out
+    ./slow < input > out1
+    diff out out1 > /dev/null || break
+
+    echo "Passed test"
+done
+        
