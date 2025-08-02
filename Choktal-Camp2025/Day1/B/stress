@@ -1,15 +1,14 @@
-make gen
-make fast
-make slow
-make check
+set -e
 
-i=1
+g++ -o sol sol.cpp grader.cpp
+g++ -o slow slow.cpp grader.cpp
+g++ -o gen gen.cpp
+
 while true; do
-  ./gen > input
-  ./fast < input > MyAns
-  ./slow < input > CorrectAns
-  diff MyAns CorrectAns > /dev/null || break
-    echo "Passed test case: $i"
+    ./gen > input
+    ./fast < input > out 
+    ./slow < input > out2 
+    diff out out2 > /dev/null || break
+    echo "Passed test case"
     echo
-  i=$(expr $i + 1)
 done

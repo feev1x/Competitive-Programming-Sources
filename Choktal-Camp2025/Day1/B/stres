@@ -1,0 +1,15 @@
+set -e
+
+make gen
+./c
+g++ -Wall -o slow slow.cpp 
+
+((cnt=1))
+while true; do
+    ./gen > samp
+    ./sol < samp > out1 
+    ./slow < samp > out2 
+    diff -Z out1 out2 > /dev/null || break
+    echo "Passed test case" $cnt
+    ((++cnt))
+done

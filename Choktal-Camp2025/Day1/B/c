@@ -1,0 +1,1 @@
+g++ -o sol sol.cpp
