@@ -24,7 +24,20 @@ bool chmax(A &a, const B &b) {
 }
 
 void solve() {
-  
+	int n; cin >> n;
+	
+	int res = 0;
+	
+	cout << fixed << setprecision(10);
+	
+	for(int i = 1; i <= n; i++) {
+		res += (int)log2(i);
+		cout << log2(i) << ' ';
+	}
+	
+	cout << fixed << setprecision(10) << res << nl;
+	
+	cout << (res <= 2 * n ? "YES" : "NO") << nl;
 }
 
 signed main() {
