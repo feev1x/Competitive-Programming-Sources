@@ -1,0 +1,2 @@
+set -e
+g++ -std=c++17 -O2 pon.cpp -o r

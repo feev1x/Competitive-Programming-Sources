@@ -1,51 +1,57 @@
 /**
  *    author:  feev1x
- *    created: 24.10.2024 12:09:12
+ *    created: 09.08.2025 16:09:31
 **/
-#include "bits/stdc++.h"
-using namespace std;
+#include <bits/stdc++.h>
 
-#ifndef ONLINE_JUDGE
-#include "/debug.h"
-#else
-#define debug(...)
-#define debugArr(...)
-#endif
+struct custom_hash {
+   static uint64_t splitmix64(uint64_t x) {
+       x += 0x9e3779b97f4a7c15;
+       x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+       x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+       return x ^ (x >> 31);
+   }
 
-signed main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
-  int n; cin >> n;
-  map<vector<bool>, map<string, vector<int>>> mp;
-  for (int i = 1; i <= n; ++i) {
-    string s, t; cin >> s >> t;
-    vector<bool> chk(26);
-    for (int j = 0; j < t.size(); ++j) {
-      chk[t[j] - 'a'] = true;
+   size_t operator()(uint64_t x) const {
+       static const uint64_t FIXED_RANDOM = std::chrono::steady_clock::now().time_since_epoch().count();
+       return splitmix64(x + FIXED_RANDOM);
+   }
+};
+
+int main() {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    
+    int n; std::cin >> n;
+
+    std::map<int, std::map<std::string, std::vector<int>>> mp;
+    for (int i = 1; i <= n; ++i) {
+        std::string s, t; std::cin >> s >> t;
+
+        int mask = 0;
+        for (auto u: t)
+            mask |= (1 << u - 'a');
+
+        while (s.size() && (mask >> (s.back() - 'a') & 1))
+            s.pop_back();
+
+        mp[mask][s].emplace_back(i);
     }
-    while (!s.empty() && chk[s.back() - 'a']) {
-      s.pop_back();
+
+    std::vector<std::vector<int>> res;
+    for (auto [key, val]: mp)
+        for (auto [key1, val1]: val)
+            res.emplace_back(val1);
+
+    std::cout << res.size() << '\n';
+    for (auto u: res) {
+        std::cout << u.size() << ' ';
+
+        for (auto v: u)
+            std::cout << v << ' ';
+
+        std::cout << '\n';
     }
-    debug(s, chk);
-    mp[chk][s].emplace_back(i);
-  }
-  vector<vector<int>> ans;
-  for (auto [key, val]: mp) {
-    for (auto [key1, val1]: val) {
-      vector<int> sm;
-      for (auto u: val1) {
-        sm.emplace_back(u);
-      }
-      ans.emplace_back(sm);
-    }
-  }
-  cout << ans.size() << '\n';
-  for (int i = 0; i < ans.size(); ++i) {
-    cout << ans[i].size() << ' ';
-    for (int j = 0; j < ans[i].size(); ++j) {
-      cout << ans[i][j] << ' ';
-    }
-    cout << '\n';
-  }
-  return 0;
+
+    return 0;
 }
