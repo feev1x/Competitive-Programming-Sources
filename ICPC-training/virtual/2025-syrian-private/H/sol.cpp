@@ -1,0 +1,51 @@
+/**
+ *    author:  feev1x
+ *    created: 13.08.2025 15:37:27
+**/
+#include <bits/stdc++.h>
+
+struct custom_hash {
+   static uint64_t splitmix64(uint64_t x) {
+       x += 0x9e3779b97f4a7c15;
+       x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+       x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+       return x ^ (x >> 31);
+   }
+
+   size_t operator()(uint64_t x) const {
+       static const uint64_t FIXED_RANDOM = std::chrono::steady_clock::now().time_since_epoch().count();
+       return splitmix64(x + FIXED_RANDOM);
+   }
+};
+
+int main() {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    
+    int tt; std::cin >> tt;
+    while (tt--) {
+        int n; std::cin >> n;
+
+        std::vector<bool> a(n + 1);
+        for (int i = 1; i <= n; ++i) {
+            int64_t u; std::cin >> u;
+
+            a[i] = u % 2ll;
+        }
+
+        std::vector<bool> dp(n + 1);
+
+        dp[n] = a[n];
+        for (int i = n - 1; i >= 1; --i) {
+            if (dp[i + 1]) {
+                dp[i] = false;
+                continue;
+            }
+
+            dp[i] = a[i];
+        }
+
+        std::cout << (!dp[1] ? "First\n" : "Second\n");
+    }
+    return 0;
+}
