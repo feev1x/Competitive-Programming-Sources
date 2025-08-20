@@ -1,0 +1,2 @@
+cp makra.cpp sol.cpp
+geany sol.cpp
