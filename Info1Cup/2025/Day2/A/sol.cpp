@@ -7,76 +7,33 @@
 
 constexpr int NN = 3e5;
 
-struct Segtree {
-    std::vector<std::vector<int>> t;
-    std::vector<int> a;
+
+struct Bit {
+    std::vector<int> p;
     int n;
-
-    inline void build(int v, int tl, int tr) {
-        if (tl == tr) {
-            t[v].emplace_back(a[tl]);
-            return;
-        }
-
-        int tm = tl + tr >> 1;
-
-        build(v << 1, tl, tm);
-        build(v << 1 | 1, tm + 1, tr);
-
-        int l = 0, r = 0;
-        while (l < t[v << 1].size() && r < t[v << 1 | 1].size()) {
-            if (t[v << 1][l] > t[v << 1 | 1][r]) {
-                t[v].emplace_back(t[v << 1 | 1][r++]);
-            } else {
-                t[v].emplace_back(t[v << 1][l++]);
-            }
-        }
-
-        while (l < t[v << 1].size()) {
-            t[v].emplace_back(t[v << 1][l++]);
-        }
-
-        while (r < t[v << 1 | 1].size()) {
-            t[v].emplace_back(t[v << 1 | 1][r++]);
-        }
+    
+    Bit(int _n) : n(_n) {
+        p.resize(n);
     }
 
-    Segtree(std::vector<int> _a) : n(_a.size()) {
-        t.resize(n * 4 + 5);
-        a.resize(n + 1);
+    inline void update(int r, int x) {
+        r = n - r + 1;
 
-        for (int i = 1; i <= n; ++i) {
-            a[i] = _a[i - 1];
-        }
-
-        build(1, 1, n);
+        for (; r <= n; r += r & -r)
+            p[r] += x;
     }
 
-    inline int get(int v, int tl, int tr, int l, int r, int m) {
-        if (tl > r || l > tr || t[v].back() < m) {
-            return 0;
-        }
+    inline int get(int r) {
+        r = n - r + 1;
 
-        int tm = tl + tr >> 1;
+        int res = 0;
+        for (; r >= 1; r -= r & -r)
+            res += p[r];
 
-        if (t[v].front() >= m) {
-            return std::min(tr, r) - std::max(tl, l) + 1;
-        }
-
-        if (l <= tl && tr <= r) {
-            int j = std::lower_bound(t[v].begin(), t[v].end(), m) - t[v].begin();
-
-            return (int)t[v].size() - j;
-        }
-
-
-        return get(v << 1, tl, tm, l, r, m) + get(v << 1 | 1, tm + 1, tr, l, r, m);
-    }
-
-    inline int get(int l, int r, int m) {
-        return get(1, 1, n, l, r, m);
+        return res;
     }
 };
+
 
 std::vector <long long> solve(
     int n, int q,
@@ -86,44 +43,53 @@ std::vector <long long> solve(
     std::vector <int> M
 ) {
 
-//    int mx = *std::max_element(M.begin(), M.end());
-//
-//    std::vector<std::vector<int64_t>> p(n + 1, std::vector<int64_t>(NN));
-//    for (int i = 0; i < n; ++i) {
-//        for (int j = 1; j < NN; ++j) {
-//            p[i + 1][j] = p[i][j] + (a[i] % j);
-//        }
-//    }
-//
-    Segtree t(a);
+    int N = 3e5 + 5;
+    std::vector<long long> ans(q);
     std::vector<int64_t> p(n + 1);
-    for (int i = 0; i < n; ++i) {
-        p[i + 1] = a[i] + p[i];
+    for (int i = 0; i < n; ++i)
+        p[i + 1] = p[i] + a[i];
+    
+    Bit bit(N);
+    std::vector<std::vector<int>> del(n), add(n);
+    std::vector<int> idx;
+    for (int i = 0; i < q; ++i)
+        if (M[i] >= 3000) {
+            if (L[i])
+                del[L[i] - 1].emplace_back(i);
+
+            add[R[i]].emplace_back(i);
+
+            ans[i] += p[R[i] + 1] - p[L[i]];
+        } else
+            idx.emplace_back(i);
+
+    std::sort(idx.begin(), idx.end(), [&](int i, int j) {
+        return M[i] < M[j];
+    });
+
+    std::vector<int64_t> pref(n + 1);
+
+    int ls = 0;
+    for (auto i: idx) {
+        if (ls != M[i])
+            for (int j = 0; j < n; ++j)
+                pref[j + 1] = pref[j] + (a[j] % M[i]);
+
+        ls = M[i];
+
+        ans[i] = pref[R[i] + 1] - pref[L[i]];
     }
 
+    for (int i = 0; i < n; ++i) {
+        bit.update(a[i], 1);
 
-    std::vector<long long> ans;
-    for (int i = 0; i < q; ++i) {
-//        if (M[i] < NN) {
-//            int64_t sum = p[R[i] + 1][M[i]] - p[L[i]][M[i]];
-//
-//            ans.emplace_back(sum);
-//        } else {
-            int64_t res = 0, nw = 1;
-            while (nw * M[i] <= NN) {
-                int got = t.get(L[i] + 1, R[i] + 1, nw * M[i]);
+        for (auto j: del[i])
+            for (int k = 1; k * M[j] < N; ++k)
+                ans[j] += (int64_t)bit.get(k * M[j]) * M[j];
 
-                if (got) {
-                    res += got;
-                } else {
-                    break;
-                }
-
-                nw++;
-            }
-
-            ans.emplace_back(p[R[i] + 1] - p[L[i]] - res * M[i]);
-//        }
+        for (auto j: add[i])
+            for (int k = 1; k * M[j] < N; ++k)
+                ans[j] -= (int64_t)bit.get(k * M[j]) * M[j];
     }
 
     return ans;

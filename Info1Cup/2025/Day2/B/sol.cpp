@@ -56,9 +56,9 @@ int main() {
         }
 
         int sum = 0;
-        for (int i = 1; i <= n; ++i) {
-            add_self(sum, dp[n - i][i]);
-        }
+        for (int i = 1; i <= n; ++i)
+            if (n - i < N && i < N)
+                add_self(sum, dp[n - i][i]);
 
         std::cout << sum << '\n';
     }

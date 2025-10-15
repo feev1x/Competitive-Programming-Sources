@@ -52,19 +52,26 @@ int main() {
     std::string s; std::cin >> s;
 
     int n = s.size();
-    std::vector<int> cnt(N);
+    std::vector<int> cnt(N), fac(n + 1, 1), inv(n + 1, 1);
     for (auto u: s)
-        cnt[u]++;
+        cnt[u - 'a']++;
 
-    std::vector<int> dp(n + 1);
+    for (int i = 1; i <= n; ++i)
+        fac[i] = mul(fac[i - 1], i);
 
-    dp[n] = 1;
-    for (int i = 0; i < N; ++i) {
-        auto new_dp = dp;
+    inv[n] = binpow(fac[n], MOD - 2);
 
-        std::vector<int> add(n + 1);
+    for (int i = n - 1; i >= 1; --i)
+        inv[i] = mul(inv[i + 1], i + 1);
 
-        for (int j = 
-    }
+    auto C = [&](int r, int c) {
+        return mul(fac[r], mul(inv[c], inv[r - c]));
+    };
+
+    int res = 1, space = n;
+    for (int i = 0; i < N; ++i)
+        res = mul(res, C(space, cnt[i])), space -= cnt[i];
+
+    std::cout << res << '\n';
     return 0;
 }
