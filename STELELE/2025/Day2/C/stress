@@ -1,0 +1,13 @@
+set -e
+
+make sol
+make slow
+make gen
+
+while true; do
+    ./gen > test
+    ./sol < test > ans1
+    ./slow < test > ans2
+
+    diff -Z ans1 ans2 > /dev/null || break
+done
