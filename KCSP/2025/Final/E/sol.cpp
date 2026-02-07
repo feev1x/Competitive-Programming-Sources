@@ -12,7 +12,7 @@ int main() {
 
     std::map<std::string, int> mp;
     std::vector<int> nx(n + 1, -1), pv(n + 1, -1);
-    int nw = 1;
+    int nw = 0;
     for (int i = 0; i < m; ++i) {
         std::string s1, s2; std::cin >> s1 >> s2;
         
@@ -55,8 +55,8 @@ int main() {
     }
 
     std::cout << std::fixed << std::setprecision(10);
-    for (int i = 1; i <= n; ++i) {
-        std::cout << ans[i] / cans[i] << '\n';
+    for (int i = 1; i < n; ++i) {
+        std::cout << ans[i] << ' ' << cans[i] << '\n';
     }
     return 0;
 }

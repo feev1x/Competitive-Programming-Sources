@@ -1,0 +1,15 @@
+make gen
+make sol 
+make slow
+
+((i=1))
+while true; do
+  ./gen > input
+  ./sol < input > MyAns
+  ./slow < input > CorrectAns
+
+  diff -Z MyAns CorrectAns > /dev/null || break
+  ((i++))
+
+  echo "Passed Test $i"
+done

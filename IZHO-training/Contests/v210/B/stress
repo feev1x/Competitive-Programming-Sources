@@ -1,0 +1,18 @@
+set -e
+
+make sol
+make slow
+make gen
+
+((cnt=1))
+while true; do
+    ./gen > test
+    ./sol < test > out
+    ./slow < test > out2
+
+    diff -Z out out2 > /dev/null || break
+
+    echo "Passed Test $cnt"
+
+    ((cnt++))
+done

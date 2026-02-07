@@ -1,0 +1,14 @@
+set -e
+
+make sol
+make gen
+
+while true; do
+    ./gen > test
+    
+    if ! ./sol < test; then
+        exit 1
+    fi
+
+    echo "pt"
+done

@@ -18,6 +18,21 @@ struct custom_hash {
    }
 };
 
+constexpr __int128 MOD = 1e9 + 7;
+
+inline __int128 gcd(__int128 a, __int128 b) {
+    if (a > b) {
+        std::swap(a, b);
+    }
+
+    while (a) {
+        b %= a;
+        std::swap(a, b);
+    }
+
+    return b;
+}
+
 int main() {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(nullptr);
@@ -29,12 +44,12 @@ int main() {
     for (int i = 1; i <= n; ++i)
         std::cin >> p[i];
 
-    int64_t lcm = 1;
+    __int128 lcm = 1;
     for (int i = 1; i <= n; ++i) {
         if (used[i])
             continue;
 
-        int64_t cnt = 1, u = p[i];
+        __int128 cnt = 1, u = p[i];
 
         used[i] = true;
         while (u != i) {
@@ -44,9 +59,11 @@ int main() {
             u = p[u];
         }
 
-        lcm = std::lcm(cnt, lcm);
+        lcm = cnt / gcd(cnt, lcm) * lcm;
     }
 
-    std::cout << lcm << '\n';
+    int res = int(lcm % MOD);
+
+    std::cout << res << '\n';
     return 0;
 }

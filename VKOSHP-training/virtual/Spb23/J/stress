@@ -1,0 +1,14 @@
+set -e
+make gen
+make fast
+make slow
+
+while true; do
+  ./gen > input
+  ./fast < input > MyAns
+  ./slow < input > CorrectAns
+
+  diff -Z MyAns CorrectAns > /dev/null || break
+
+  echo "PAssed"
+done
