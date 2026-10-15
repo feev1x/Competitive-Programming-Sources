@@ -1,0 +1,1 @@
+g++ -std=gnu++17 -O2 -o r grader.cpp Ali.cpp Benjamin.cpp

@@ -1,0 +1,1 @@
+/usr/bin/g++ -DEVAL -std=gnu++20 -O2 -pipe -static -s -o r equalmex.cpp grader.cpp

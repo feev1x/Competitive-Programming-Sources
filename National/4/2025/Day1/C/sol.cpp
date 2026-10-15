@@ -79,9 +79,11 @@ int main() {
     for (int l = 1; l <= n; ++l) {
         int sum = all, pw = 0;
 
-        for (int j = 0; j < 26; ++j)
-            while (idx[j] < pos[j].size() && pos[j][idx[j]] < l)
+        for (int j = 0; j < 26; ++j) {
+            while (idx[j] < pos[j].size() && pos[j][idx[j]] < l) {
                 idx[j]++;
+            }
+        }
 
 
         std::vector<int> ps(26);
@@ -99,19 +101,11 @@ int main() {
             return pos[i][idx[i]] < pos[j][idx[j]];
         });
 
-        int POS = 29;
-        if (l > 1) {
-            POS = s[l - 2] - 'a';
-
-            sum = divide(sum, pos[POS].size());
-
-            sum = mul(sum, pos[POS].size() - 1);
-        }
-
         int old = l, val = -1;
         for (auto r: ps) {
-            if (idx[r] >= pos[r].size())
-                break;
+            if (idx[r] >= pos[r].size()) {
+                continue;
+            }
 
             r = pos[r][idx[r]];
 

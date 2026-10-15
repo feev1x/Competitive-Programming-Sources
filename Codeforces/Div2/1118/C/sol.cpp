@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+
+inline bool ask(int u, int v, int d) {
+  if (u == v) return false;
+  std::cout << "? " << u << ' ' << v << ' ' << d << std::endl;
+  int got; std::cin >> got;
+  return got;
+}
+
+inline void report(int u, int v, int d) {
+  std::cout << "! " << u << ' ' << v << ' ' << d << std::endl;
+}
+
+inline void solve() {
+  int n; std::cin >> n;
+  int a = 1, b = 1, d = 0;
+  for (int i = 2; i <= n; ++i) {
+    if (ask(a, i, d + 1)) {
+      b = i;
+      ++d;
+      while (ask(a, b, d + 1)) ++d;
+    }
+  }
+  std::swap(a, b);
+  for (int i = 2; i <= n; ++i) {
+    if (ask(a, i, d + 1)) {
+      b = i;
+      ++d;
+      while (ask(a, b, d + 1)) ++d;
+    }
+  }
+  report(a, b, d);
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr);
+  int tt; std::cin >> tt;
+  while (tt--) solve();
+  return 0;
+}
